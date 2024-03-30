@@ -2,8 +2,10 @@ package repositories
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"recommendation-service/config"
+	"recommendation-service/internal/module/recommendation/models/entity"
 	"recommendation-service/internal/module/recommendation/models/response"
 	"recommendation-service/internal/pkg/errors"
 	"recommendation-service/internal/pkg/log"
@@ -22,9 +24,49 @@ type repositories struct {
 	redisClient    *redis.Client
 }
 
+// UpsertVenue implements Repositories.
+func (r *repositories) UpsertVenue(ctx context.Context, payload entity.Venues) error {
+	tx, err := r.db.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if err != nil {
+			tx.Rollback()
+			return
+		}
+		err = tx.Commit()
+	}()
+
+	// Check if the venue already exists
+	var existingVenueID int64
+	err = tx.QueryRowContext(ctx, "SELECT id FROM venues WHERE name = $1 FOR UPDATE", payload.Name).Scan(&existingVenueID)
+	if err != nil && err != sql.ErrNoRows {
+		return err
+	}
+
+	if err == sql.ErrNoRows {
+		// Venue does not exist, insert a new record
+		_, err = tx.ExecContext(ctx, "INSERT INTO venues (name, is_sold_out, is_first_sold_out) VALUES ($1, $2, $3)", payload.Name, payload.IsSoldOut, payload.IsFirstSoldOut)
+		if err != nil {
+			return err
+		}
+	} else {
+		// Venue already exists, update the existing record
+		_, err = tx.ExecContext(ctx, "UPDATE venues SET is_sold_out = $1, SET is_sold_out_first = $2 WHERE id = $3", payload.IsSoldOut, payload.IsFirstSoldOut, existingVenueID)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 type Repositories interface {
 	// http
 	ValidateToken(ctx context.Context, token string) (bool, error)
+	// db
+	UpsertVenue(ctx context.Context, payload entity.Venues) error
 }
 
 func New(db *sqlx.DB, log log.Logger, httpClient *circuit.HTTPClient, redisClient *redis.Client) Repositories {

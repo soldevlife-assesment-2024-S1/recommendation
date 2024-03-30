@@ -7,7 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func Initialize(app *fiber.App, handlerTicket *handler.TicketHandler, m *middleware.Middleware) *fiber.App {
+func Initialize(app *fiber.App, handlerTicket *handler.RecommendationHandler, m *middleware.Middleware) *fiber.App {
 
 	// health check
 	app.Get("/health", func(c *fiber.Ctx) error {

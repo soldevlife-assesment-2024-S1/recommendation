@@ -10,3 +10,9 @@ type PoisonedQueue struct {
 	ErrorMsg    string      `json:"error_msg" validate:"required"`
 	Payload     interface{} `json:"payload" validate:"required"`
 }
+
+type UpdateVenueStatus struct {
+	VenueName      string `json:"venue_name" validate:"required"`
+	IsSoldOut      bool   `json:"is_sold_out" validate:"required"`
+	IsFirstSoldOut bool   `json:"is_first_sold_out" validate:"required"`
+}

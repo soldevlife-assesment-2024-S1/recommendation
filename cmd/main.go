@@ -53,7 +53,7 @@ func initService(cfg *config.Config) (*fiber.App, []*message.Router) {
 	amqp := messagestream.NewAmpq(&cfg.MessageStream)
 
 	// Init Subscriber
-	_, err := amqp.NewSubscriber()
+	subscriber, err := amqp.NewSubscriber()
 	if err != nil {
 		logger.Error(ctx, "Failed to create subscriber", err)
 	}
@@ -71,7 +71,7 @@ func initService(cfg *config.Config) (*fiber.App, []*message.Router) {
 	}
 
 	validator := validator.New()
-	ticketHandler := handler.TicketHandler{
+	recommendationHandler := handler.RecommendationHandler{
 		Log:       logger,
 		Validator: validator,
 		Usecase:   recommendationUsecase,
@@ -80,21 +80,21 @@ func initService(cfg *config.Config) (*fiber.App, []*message.Router) {
 
 	var messageRouters []*message.Router
 
-	// incrementTicketStock, err := messagestream.NewRouter(publisher, "increment_stock_ticket_poisoned", "increment_stock_ticket_handler", "increment_stock_ticket", subscriber, ticketHandler.IncrementTicketStock)
-	// if err != nil {
-	// 	logger.Error(ctx, "Failed to create consume_booking_queue router", err)
-	// }
+	updateVenueStatus, err := messagestream.NewRouter(publisher, "update_venue_status_poisoned", "update_venue_status_handler", "update_venue_status", subscriber, recommendationHandler.UpdateVenueStatus)
+	if err != nil {
+		logger.Error(ctx, "Failed to create consume_booking_queue router", err)
+	}
 
 	// decrementTicketStock, err := messagestream.NewRouter(publisher, "decrement_stock_ticket_poisoned", "decrement_stock_ticket_handler", "decrement_stock_ticket", subscriber, ticketHandler.DecrementTicketStock)
 	// if err != nil {
 	// 	logger.Error(ctx, "Failed to create consume_booking_queue router", err)
 	// }
 
-	// messageRouters = append(messageRouters, incrementTicketStock, decrementTicketStock)
+	messageRouters = append(messageRouters, updateVenueStatus)
 
 	serverHttp := http.SetupHttpEngine()
 
-	r := router.Initialize(serverHttp, &ticketHandler, &middleware)
+	r := router.Initialize(serverHttp, &recommendationHandler, &middleware)
 
 	return r, messageRouters
 
