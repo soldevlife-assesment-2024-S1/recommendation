@@ -12,7 +12,20 @@ type usecases struct {
 
 // UpdateVenueStatus implements Usecases.
 func (u *usecases) UpdateVenueStatus(ctx context.Context, payload *request.UpdateVenueStatus) error {
-	panic("unimplemented")
+	venue, err := u.repo.FindVenueByName(ctx, payload.VenueName)
+	if err != nil {
+		return err
+	}
+
+	venue.IsSoldOut = payload.IsSoldOut
+	venue.IsFirstSoldOut = payload.IsFirstSoldOut
+
+	err = u.repo.UpsertVenue(ctx, venue)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 type Usecases interface {

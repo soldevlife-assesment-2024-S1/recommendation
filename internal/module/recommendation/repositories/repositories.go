@@ -24,6 +24,16 @@ type repositories struct {
 	redisClient    *redis.Client
 }
 
+// FindVenueByName implements Repositories.
+func (r *repositories) FindVenueByName(ctx context.Context, name string) (entity.Venues, error) {
+	var venue entity.Venues
+	err := r.db.GetContext(ctx, &venue, "SELECT * FROM venues WHERE name = $1", name)
+	if err != nil {
+		return entity.Venues{}, err
+	}
+	return venue, nil
+}
+
 // UpsertVenue implements Repositories.
 func (r *repositories) UpsertVenue(ctx context.Context, payload entity.Venues) error {
 	tx, err := r.db.BeginTx(ctx, nil)
@@ -67,6 +77,7 @@ type Repositories interface {
 	ValidateToken(ctx context.Context, token string) (bool, error)
 	// db
 	UpsertVenue(ctx context.Context, payload entity.Venues) error
+	FindVenueByName(ctx context.Context, name string) (entity.Venues, error)
 }
 
 func New(db *sqlx.DB, log log.Logger, httpClient *circuit.HTTPClient, redisClient *redis.Client) Repositories {

@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS venues (
+    id serial PRIMARY KEY,
+    name TEXT NOT NULL,
+    is_sold_out BOOLEAN NOT NULL DEFAULT FALSE,
+    is_first_sold_out BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP,
+    deleted_at TIMESTAMP
+);
