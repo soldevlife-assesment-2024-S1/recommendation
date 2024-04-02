@@ -8,6 +8,7 @@ import (
 	"recommendation-service/internal/module/recommendation/repositories"
 	"recommendation-service/internal/module/recommendation/usecases"
 	"recommendation-service/internal/pkg/database"
+	"recommendation-service/internal/pkg/gorules"
 	"recommendation-service/internal/pkg/http"
 	"recommendation-service/internal/pkg/httpclient"
 	log_internal "recommendation-service/internal/pkg/log"
@@ -48,6 +49,13 @@ func initService(cfg *config.Config) (*fiber.App, []*message.Router) {
 	logger := log_internal.GetLogger()
 	cb := httpclient.InitCircuitBreaker(&cfg.HttpClient, cfg.HttpClient.Type)
 	httpClient := httpclient.InitHttpClient(&cfg.HttpClient, cb)
+
+	// init business rules engine
+	bre, err := gorules.Init()
+	if err != nil {
+		logger.Error(context.Background(), "Failed to init business rules engine", err)
+	}
+
 	ctx := context.Background()
 	// init message stream
 	amqp := messagestream.NewAmpq(&cfg.MessageStream)
@@ -64,8 +72,8 @@ func initService(cfg *config.Config) (*fiber.App, []*message.Router) {
 		logger.Error(ctx, "Failed to create publisher", err)
 	}
 
-	recommendationRepo := repositories.New(db, logger, httpClient, redis)
-	recommendationUsecase := usecases.New(recommendationRepo)
+	recommendationRepo := repositories.New(db, logger, httpClient, redis, &cfg.UserService, &cfg.TicketService)
+	recommendationUsecase := usecases.New(recommendationRepo, bre)
 	middleware := middleware.Middleware{
 		Repo: recommendationRepo,
 	}
@@ -84,11 +92,6 @@ func initService(cfg *config.Config) (*fiber.App, []*message.Router) {
 	if err != nil {
 		logger.Error(ctx, "Failed to create consume_booking_queue router", err)
 	}
-
-	// decrementTicketStock, err := messagestream.NewRouter(publisher, "decrement_stock_ticket_poisoned", "decrement_stock_ticket_handler", "decrement_stock_ticket", subscriber, ticketHandler.DecrementTicketStock)
-	// if err != nil {
-	// 	logger.Error(ctx, "Failed to create consume_booking_queue router", err)
-	// }
 
 	messageRouters = append(messageRouters, updateVenueStatus)
 

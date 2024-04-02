@@ -17,11 +17,66 @@ import (
 )
 
 type repositories struct {
-	db             *sqlx.DB
-	log            log.Logger
-	httpClient     *circuit.HTTPClient
-	cfgUserService *config.UserService
-	redisClient    *redis.Client
+	db               *sqlx.DB
+	log              log.Logger
+	httpClient       *circuit.HTTPClient
+	cfgUserService   *config.UserServiceConfig
+	cfgTicketService *config.TicketServiceConfig
+	redisClient      *redis.Client
+}
+
+// FindTicketByRegionName implements Repositories.
+func (r *repositories) FindTicketByRegionName(ctx context.Context, regionName string) ([]response.Ticket, error) {
+	// call http to ticket service
+	url := fmt.Sprintf("http://%s:%s/api/private/ticket?region_name=%s", r.cfgTicketService.Host, r.cfgTicketService.Port, regionName)
+	resp, err := r.httpClient.Get(url)
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		r.log.Error(ctx, "Failed to get ticket", resp.StatusCode)
+		return nil, errors.BadRequest("Failed to get ticket")
+	}
+
+	// parse response
+	var respData []response.Ticket
+
+	dec := json.NewDecoder(resp.Body)
+	if err := dec.Decode(&respData); err != nil {
+		return nil, err
+	}
+
+	return respData, nil
+}
+
+// FindUserProfile implements Repositories.
+func (r *repositories) FindUserProfile(ctx context.Context, userID int64) (response.UserProfile, error) {
+	// http call to user service
+	url := fmt.Sprintf("http://%s:%s/api/private/user/profile?user_id=%d", r.cfgUserService.Host, r.cfgUserService.Port, userID)
+	resp, err := r.httpClient.Get(url)
+	if err != nil {
+		return response.UserProfile{}, err
+	}
+
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		r.log.Error(ctx, "Failed to get user profile", resp.StatusCode)
+		return response.UserProfile{}, errors.BadRequest("Failed to get user profile")
+	}
+
+	// parse response
+	var respData response.UserProfile
+
+	dec := json.NewDecoder(resp.Body)
+	if err := dec.Decode(&respData); err != nil {
+		return response.UserProfile{}, err
+	}
+
+	return respData, nil
 }
 
 // FindVenueByName implements Repositories.
@@ -75,17 +130,21 @@ func (r *repositories) UpsertVenue(ctx context.Context, payload entity.Venues) e
 type Repositories interface {
 	// http
 	ValidateToken(ctx context.Context, token string) (bool, error)
+	FindUserProfile(ctx context.Context, userID int64) (response.UserProfile, error)
+	FindTicketByRegionName(ctx context.Context, regionName string) ([]response.Ticket, error)
 	// db
 	UpsertVenue(ctx context.Context, payload entity.Venues) error
 	FindVenueByName(ctx context.Context, name string) (entity.Venues, error)
 }
 
-func New(db *sqlx.DB, log log.Logger, httpClient *circuit.HTTPClient, redisClient *redis.Client) Repositories {
+func New(db *sqlx.DB, log log.Logger, httpClient *circuit.HTTPClient, redisClient *redis.Client, userService *config.UserServiceConfig, ticketService *config.TicketServiceConfig) Repositories {
 	return &repositories{
-		db:          db,
-		log:         log,
-		httpClient:  httpClient,
-		redisClient: redisClient,
+		db:               db,
+		log:              log,
+		httpClient:       httpClient,
+		redisClient:      redisClient,
+		cfgUserService:   userService,
+		cfgTicketService: ticketService,
 	}
 }
 

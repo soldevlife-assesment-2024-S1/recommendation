@@ -12,7 +12,8 @@ type Config struct {
 	HttpServer    HttpServerConfig
 	HttpClient    HttpClientConfig
 	Logger        LoggerConfig
-	UserService   UserService
+	UserService   UserServiceConfig
+	TicketService TicketServiceConfig
 	Database      DatabaseConfig
 	MessageStream MessageStreamConfig
 }
@@ -67,9 +68,14 @@ type HttpClientConfig struct {
 	Type                string  `envconfig:"http_client_type"` // consecutive, error_rate
 }
 
-type UserService struct {
+type UserServiceConfig struct {
 	Host string `envconfig:"user_service_host"`
 	Port string `envconfig:"user_service_port"`
+}
+
+type TicketServiceConfig struct {
+	Host string `envconfig:"ticket_service_host"`
+	Port string `envconfig:"ticket_service_port"`
 }
 
 type HttpServerConfig struct {

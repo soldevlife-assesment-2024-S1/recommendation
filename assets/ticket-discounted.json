@@ -1,0 +1,214 @@
+{
+  "contentType": "application/vnd.gorules.decision",
+  "nodes": [
+    {
+      "id": "96fda0e1-6808-4a18-900c-f631788542a9",
+      "name": "ticket",
+      "type": "inputNode",
+      "position": {
+        "x": 10,
+        "y": 170
+      }
+    },
+    {
+      "id": "ed09a6cb-f333-443f-ac78-0275a2958234",
+      "name": "ticket_price",
+      "type": "outputNode",
+      "position": {
+        "x": 660,
+        "y": 170
+      }
+    },
+    {
+      "id": "b6e14c6f-e5fe-4955-92fa-8075b00ccb60",
+      "name": "price-per-region",
+      "type": "decisionTableNode",
+      "content": {
+        "rules": [
+          {
+            "_id": "6580a515-01c3-48a5-bab0-afd1996477a4",
+            "_description": "in usd",
+            "80d2195d-db75-4b3e-9a79-1dfb37f3c36c": "50",
+            "c764965b-2435-48ac-a955-1d17d25dffcc": "\"wood\"",
+            "d0af06cf-f2cd-40aa-aed6-886233eb0daf": "\"asean\""
+          },
+          {
+            "_id": "0cff9efd-bfab-4d2f-bcb8-4efca60dfdb0",
+            "_description": "in usd",
+            "80d2195d-db75-4b3e-9a79-1dfb37f3c36c": "75",
+            "c764965b-2435-48ac-a955-1d17d25dffcc": "\"wood\"",
+            "d0af06cf-f2cd-40aa-aed6-886233eb0daf": "\"asia\""
+          },
+          {
+            "_id": "9ccfa269-3932-40f7-b2fb-b055900880d6",
+            "_description": "in usd",
+            "80d2195d-db75-4b3e-9a79-1dfb37f3c36c": "75",
+            "c764965b-2435-48ac-a955-1d17d25dffcc": "\"wood\"",
+            "d0af06cf-f2cd-40aa-aed6-886233eb0daf": "\"middle_east\""
+          },
+          {
+            "_id": "a954880a-0cb2-4c2b-aac6-d348f74e3d79",
+            "_description": "in usd",
+            "80d2195d-db75-4b3e-9a79-1dfb37f3c36c": "100",
+            "c764965b-2435-48ac-a955-1d17d25dffcc": "\"wood\"",
+            "d0af06cf-f2cd-40aa-aed6-886233eb0daf": "\"south_america\""
+          },
+          {
+            "_id": "a80225be-66e3-4063-917b-d990b17103bc",
+            "_description": "in usd",
+            "80d2195d-db75-4b3e-9a79-1dfb37f3c36c": "150",
+            "c764965b-2435-48ac-a955-1d17d25dffcc": "\"bronze\"",
+            "d0af06cf-f2cd-40aa-aed6-886233eb0daf": "\"asean\""
+          },
+          {
+            "_id": "308e424a-cb61-44a8-b18c-8bfd556124fc",
+            "_description": "in usd",
+            "80d2195d-db75-4b3e-9a79-1dfb37f3c36c": "175",
+            "c764965b-2435-48ac-a955-1d17d25dffcc": "\"bronze\"",
+            "d0af06cf-f2cd-40aa-aed6-886233eb0daf": "\"asia\""
+          },
+          {
+            "_id": "2236dff2-415f-487c-9336-814edbfa78a8",
+            "_description": "in usd",
+            "80d2195d-db75-4b3e-9a79-1dfb37f3c36c": "175",
+            "c764965b-2435-48ac-a955-1d17d25dffcc": "\"bronze\"",
+            "d0af06cf-f2cd-40aa-aed6-886233eb0daf": "\"middle_east\""
+          },
+          {
+            "_id": "63484f2a-e2c0-411f-bf70-134276857235",
+            "_description": "in usd",
+            "80d2195d-db75-4b3e-9a79-1dfb37f3c36c": "200",
+            "c764965b-2435-48ac-a955-1d17d25dffcc": "\"bronze\"",
+            "d0af06cf-f2cd-40aa-aed6-886233eb0daf": "\"south_america\""
+          },
+          {
+            "_id": "b71bb4de-ae57-4f40-a21c-2132624c1161",
+            "_description": "in usd",
+            "80d2195d-db75-4b3e-9a79-1dfb37f3c36c": "250",
+            "c764965b-2435-48ac-a955-1d17d25dffcc": "\"silver\"",
+            "d0af06cf-f2cd-40aa-aed6-886233eb0daf": "\"asean\""
+          },
+          {
+            "_id": "97799698-ffbb-418a-b934-374e443cdc74",
+            "_description": "in usd",
+            "80d2195d-db75-4b3e-9a79-1dfb37f3c36c": "325",
+            "c764965b-2435-48ac-a955-1d17d25dffcc": "\"silver\"",
+            "d0af06cf-f2cd-40aa-aed6-886233eb0daf": "\"asia\""
+          },
+          {
+            "_id": "7f344015-90dd-4323-baca-bba0aab7fc93",
+            "_description": "in usd",
+            "80d2195d-db75-4b3e-9a79-1dfb37f3c36c": "325",
+            "c764965b-2435-48ac-a955-1d17d25dffcc": "\"silver\"",
+            "d0af06cf-f2cd-40aa-aed6-886233eb0daf": "\"middle_east\""
+          },
+          {
+            "_id": "a05a643d-eafa-465f-8c44-93d1db99ec1f",
+            "_description": "in usd",
+            "80d2195d-db75-4b3e-9a79-1dfb37f3c36c": "325",
+            "c764965b-2435-48ac-a955-1d17d25dffcc": "\"silver\"",
+            "d0af06cf-f2cd-40aa-aed6-886233eb0daf": "\"south_america\""
+          },
+          {
+            "_id": "2aa729a9-1091-4632-9d48-23426280e2b6",
+            "_description": "in usd",
+            "80d2195d-db75-4b3e-9a79-1dfb37f3c36c": "350",
+            "c764965b-2435-48ac-a955-1d17d25dffcc": "\"gold\"",
+            "d0af06cf-f2cd-40aa-aed6-886233eb0daf": "\"asean\""
+          },
+          {
+            "_id": "8222e295-7524-440e-85d7-109554d6f81f",
+            "_description": "in usd",
+            "80d2195d-db75-4b3e-9a79-1dfb37f3c36c": "425",
+            "c764965b-2435-48ac-a955-1d17d25dffcc": "\"gold\"",
+            "d0af06cf-f2cd-40aa-aed6-886233eb0daf": "\"asia\""
+          },
+          {
+            "_id": "ddf4330f-8750-4537-b61d-1a8c85a7a9a0",
+            "_description": "in usd",
+            "80d2195d-db75-4b3e-9a79-1dfb37f3c36c": "425",
+            "c764965b-2435-48ac-a955-1d17d25dffcc": "\"gold\"",
+            "d0af06cf-f2cd-40aa-aed6-886233eb0daf": "\"middle_east\""
+          },
+          {
+            "_id": "2d8e0305-1f77-4a43-8088-46f1944813f1",
+            "_description": "in usd",
+            "80d2195d-db75-4b3e-9a79-1dfb37f3c36c": "450",
+            "c764965b-2435-48ac-a955-1d17d25dffcc": "\"gold\"",
+            "d0af06cf-f2cd-40aa-aed6-886233eb0daf": "\"south_america\""
+          },
+          {
+            "_id": "1d1f1793-7c53-4533-8949-dcbde216d920",
+            "_description": "in usd",
+            "80d2195d-db75-4b3e-9a79-1dfb37f3c36c": "50",
+            "c764965b-2435-48ac-a955-1d17d25dffcc": "\"online\"",
+            "d0af06cf-f2cd-40aa-aed6-886233eb0daf": "\"asean\""
+          },
+          {
+            "_id": "d5f4c126-1fb0-4bbd-b045-0c183bce67a4",
+            "_description": "in usd",
+            "80d2195d-db75-4b3e-9a79-1dfb37f3c36c": "50",
+            "c764965b-2435-48ac-a955-1d17d25dffcc": "\"online\"",
+            "d0af06cf-f2cd-40aa-aed6-886233eb0daf": "\"asia\""
+          },
+          {
+            "_id": "8bdaa664-e49f-49ac-b6b9-3fbb73dc605b",
+            "_description": "in usd",
+            "80d2195d-db75-4b3e-9a79-1dfb37f3c36c": "50",
+            "c764965b-2435-48ac-a955-1d17d25dffcc": "\"online\"",
+            "d0af06cf-f2cd-40aa-aed6-886233eb0daf": "\"middle_east\""
+          },
+          {
+            "_id": "b364cb3b-af7a-414d-af0a-52e2d22b3766",
+            "_description": "in usd",
+            "80d2195d-db75-4b3e-9a79-1dfb37f3c36c": "50",
+            "c764965b-2435-48ac-a955-1d17d25dffcc": "\"online\"",
+            "d0af06cf-f2cd-40aa-aed6-886233eb0daf": "\"south_america\""
+          }
+        ],
+        "inputs": [
+          {
+            "id": "c764965b-2435-48ac-a955-1d17d25dffcc",
+            "name": "level",
+            "type": "expression",
+            "field": "level"
+          },
+          {
+            "id": "d0af06cf-f2cd-40aa-aed6-886233eb0daf",
+            "name": "region",
+            "type": "expression",
+            "field": "region"
+          }
+        ],
+        "outputs": [
+          {
+            "id": "80d2195d-db75-4b3e-9a79-1dfb37f3c36c",
+            "name": "Output",
+            "type": "expression",
+            "field": "price",
+            "defaultValue": "50"
+          }
+        ],
+        "hitPolicy": "first"
+      },
+      "position": {
+        "x": 335,
+        "y": 170
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "5fe94887-43a3-4977-9673-fb29c1cfbfe0",
+      "type": "edge",
+      "sourceId": "96fda0e1-6808-4a18-900c-f631788542a9",
+      "targetId": "b6e14c6f-e5fe-4955-92fa-8075b00ccb60"
+    },
+    {
+      "id": "1593b214-d361-4990-b48c-15b8039d50ae",
+      "type": "edge",
+      "sourceId": "b6e14c6f-e5fe-4955-92fa-8075b00ccb60",
+      "targetId": "ed09a6cb-f333-443f-ac78-0275a2958234"
+    }
+  ]
+}
