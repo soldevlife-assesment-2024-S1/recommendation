@@ -25,6 +25,16 @@ type repositories struct {
 	redisClient      *redis.Client
 }
 
+// FindVenues implements Repositories.
+func (r *repositories) FindVenues(ctx context.Context) ([]entity.Venues, error) {
+	var venues []entity.Venues
+	err := r.db.GetContext(ctx, &venues, "SELECT * FROM venues")
+	if err != nil {
+		return nil, err
+	}
+	return venues, nil
+}
+
 // FindTicketByRegionName implements Repositories.
 func (r *repositories) FindTicketByRegionName(ctx context.Context, regionName string) ([]response.Ticket, error) {
 	// call http to ticket service
@@ -135,6 +145,7 @@ type Repositories interface {
 	// db
 	UpsertVenue(ctx context.Context, payload entity.Venues) error
 	FindVenueByName(ctx context.Context, name string) (entity.Venues, error)
+	FindVenues(ctx context.Context) ([]entity.Venues, error)
 }
 
 func New(db *sqlx.DB, log log.Logger, httpClient *circuit.HTTPClient, redisClient *redis.Client, userService *config.UserServiceConfig, ticketService *config.TicketServiceConfig) Repositories {

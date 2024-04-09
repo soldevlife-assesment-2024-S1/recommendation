@@ -15,30 +15,56 @@ type usecases struct {
 	gorules zen.Decision
 }
 
+// UpdateTicketSoldOut implements Usecases.
+func (u *usecases) UpdateTicketSoldOut(ctx context.Context, payload *request.TicketSoldOut) error {
+
+	venue, err := u.repo.FindVenueByName(ctx, payload.VenueName)
+	if err != nil {
+		return err
+	}
+
+	venue.IsSoldOut = payload.IsSoldOut
+
+	venues, err := u.repo.FindVenues(ctx)
+	if err != nil {
+		return err
+	}
+
+	for _, v := range venues {
+		// check if all venue is sold out first
+		if v.IsFirstSoldOut {
+			venue.IsFirstSoldOut = false
+			break
+		} else {
+			venue.IsFirstSoldOut = true
+		}
+	}
+
+	err = u.repo.UpsertVenue(ctx, venue)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // GetRecommendation implements Usecases.
 func (u *usecases) GetRecommendation(ctx context.Context, userID int64) ([]response.Recomendation, error) {
-	// TODO: find user profile
 
 	userProfile, err := u.repo.FindUserProfile(ctx, userID)
 	if err != nil {
 		return nil, err
 	}
 
-	// TODO: find venue by region name
-
 	venues, err := u.repo.FindVenueByName(ctx, userProfile.Region)
 	if err != nil {
 		return nil, err
 	}
 
-	// TODO: find ticket by region name
-
 	tickets, err := u.repo.FindTicketByRegionName(ctx, userProfile.Region)
 	if err != nil {
 		return nil, err
 	}
-
-	// TODO: calculate recommendation by bre
 
 	var responses []response.Recomendation
 
@@ -80,7 +106,6 @@ func (u *usecases) GetRecommendation(ctx context.Context, userID int64) ([]respo
 
 	}
 
-	// TODO: return recommendation response
 	return responses, nil
 }
 
@@ -104,6 +129,7 @@ func (u *usecases) UpdateVenueStatus(ctx context.Context, payload *request.Updat
 
 type Usecases interface {
 	UpdateVenueStatus(ctx context.Context, payload *request.UpdateVenueStatus) error
+	UpdateTicketSoldOut(ctx context.Context, payload *request.TicketSoldOut) error
 	GetRecommendation(ctx context.Context, userID int64) ([]response.Recomendation, error)
 }
 

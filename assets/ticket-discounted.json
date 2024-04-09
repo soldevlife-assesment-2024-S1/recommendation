@@ -87,6 +87,38 @@
         "x": 770,
         "y": 300
       }
+    },
+    {
+      "name": "myResponse",
+      "id": "8895d099-71dc-466a-8195-85828a6b7f8e",
+      "position": {
+        "x": 1075,
+        "y": 430
+      },
+      "type": "outputNode"
+    },
+    {
+      "name": "myExpression",
+      "content": {
+        "expressions": [
+          {
+            "id": "192e3f60-11ea-48a0-b5e5-ca1f6ae207e6",
+            "key": "discount_amount",
+            "value": "0"
+          },
+          {
+            "id": "17af81eb-96ab-48ff-b1f3-2402c39b4858",
+            "key": "discounted_price",
+            "value": "price"
+          }
+        ]
+      },
+      "id": "8af7bb7d-b440-475e-9abd-0216eef0dbb5",
+      "position": {
+        "x": 770,
+        "y": 430
+      },
+      "type": "expressionNode"
     }
   ],
   "edges": [
@@ -108,6 +140,19 @@
       "type": "edge",
       "sourceId": "2d0525f2-fd25-4c7a-8ab8-fb6815ee060d",
       "targetId": "a7990dcf-9aba-4168-997a-7270f3536c43"
+    },
+    {
+      "id": "ce317874-ac1c-487b-83b0-6fc574bc95b9",
+      "sourceId": "b40e0d3b-6883-4279-924e-476424c40687",
+      "type": "edge",
+      "targetId": "8af7bb7d-b440-475e-9abd-0216eef0dbb5",
+      "sourceHandle": "2deadeb8-e445-4af7-9468-bab3da16b6cd"
+    },
+    {
+      "id": "8b040b3f-80b5-460c-b588-6d7061f56125",
+      "sourceId": "8af7bb7d-b440-475e-9abd-0216eef0dbb5",
+      "type": "edge",
+      "targetId": "8895d099-71dc-466a-8195-85828a6b7f8e"
     }
   ]
 }

@@ -93,7 +93,9 @@ func initService(cfg *config.Config) (*fiber.App, []*message.Router) {
 		logger.Error(ctx, "Failed to create consume_booking_queue router", err)
 	}
 
-	messageRouters = append(messageRouters, updateVenueStatus)
+	updateTicketSoldOut, err := messagestream.NewRouter(publisher, "update_ticket_sold_out_poisoned", "update_ticket_sold_out_handler", "update_ticket_sold_out", subscriber, recommendationHandler.UpdateTicketSoldOut)
+
+	messageRouters = append(messageRouters, updateVenueStatus, updateTicketSoldOut)
 
 	serverHttp := http.SetupHttpEngine()
 

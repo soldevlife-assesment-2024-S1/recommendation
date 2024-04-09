@@ -43,6 +43,28 @@ func (h *RecommendationHandler) UpdateVenueStatus(msg *message.Message) error {
 	return nil
 }
 
+func (h *RecommendationHandler) UpdateTicketSoldOut(msg *message.Message) error {
+
+	msg.Ack()
+
+	req := new(request.TicketSoldOut)
+
+	if err := json.Unmarshal(msg.Payload, req); err != nil {
+		return err
+	}
+
+	if err := h.Validator.Struct(req); err != nil {
+		return err
+	}
+	ctx := context.Background()
+
+	if err := h.Usecase.UpdateTicketSoldOut(ctx, req); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (h *RecommendationHandler) GetRecommendation(ctx *fiber.Ctx) error {
 	userID := ctx.Locals("userID").(string)
 
