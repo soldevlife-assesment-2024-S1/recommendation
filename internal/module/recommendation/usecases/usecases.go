@@ -11,8 +11,23 @@ import (
 )
 
 type usecases struct {
-	repo    repositories.Repositories
-	gorules zen.Decision
+	repo                  repositories.Repositories
+	discountedTicketRules zen.Decision
+}
+
+// GetOnlineTicket implements Usecases.
+func (u *usecases) GetOnlineTicket(ctx context.Context, regionName string) (response.OnlineTicket, error) {
+	var response response.OnlineTicket
+
+	venue, err := u.repo.FindVenueByName(ctx, regionName)
+	if err != nil {
+		return response, err
+	}
+
+	response.IsSoldOut = venue.IsSoldOut
+	response.IsFirstSoldOut = venue.IsFirstSoldOut
+
+	return response, nil
 }
 
 // UpdateTicketSoldOut implements Usecases.
@@ -70,7 +85,7 @@ func (u *usecases) GetRecommendation(ctx context.Context, userID int64) ([]respo
 
 	for _, ticket := range tickets {
 
-		result, err := u.gorules.Evaluate(
+		result, err := u.discountedTicketRules.Evaluate(
 			map[string]any{
 				"price":              ticket.Price,
 				"region":             userProfile.Region,
@@ -131,11 +146,12 @@ type Usecases interface {
 	UpdateVenueStatus(ctx context.Context, payload *request.UpdateVenueStatus) error
 	UpdateTicketSoldOut(ctx context.Context, payload *request.TicketSoldOut) error
 	GetRecommendation(ctx context.Context, userID int64) ([]response.Recomendation, error)
+	GetOnlineTicket(ctx context.Context, regionName string) (response.OnlineTicket, error)
 }
 
-func New(repo repositories.Repositories, gorules zen.Decision) Usecases {
+func New(repo repositories.Repositories, discountedTicketRules zen.Decision) Usecases {
 	return &usecases{
-		repo:    repo,
-		gorules: gorules,
+		repo:                  repo,
+		discountedTicketRules: discountedTicketRules,
 	}
 }

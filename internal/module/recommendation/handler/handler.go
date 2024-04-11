@@ -82,3 +82,15 @@ func (h *RecommendationHandler) GetRecommendation(ctx *fiber.Ctx) error {
 
 	return helpers.RespSuccess(ctx, h.Log, resp, "Success get recommendation")
 }
+
+func (h *RecommendationHandler) GetOnlineTicket(ctx *fiber.Ctx) error {
+	regionName := ctx.Query("region_name")
+
+	resp, err := h.Usecase.GetOnlineTicket(ctx.Context(), regionName)
+
+	if err != nil {
+		return helpers.RespError(ctx, h.Log, err)
+	}
+
+	return helpers.RespSuccess(ctx, h.Log, resp, "Success get online ticket")
+}

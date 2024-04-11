@@ -6,10 +6,10 @@ import (
 	"github.com/gorules/zen-go"
 )
 
-func Init() (zen.Decision, error) {
+func Init(filePath string) (zen.Decision, error) {
 	engine := zen.NewEngine(zen.EngineConfig{})
 
-	graph, err := os.ReadFile("./assets/ticket-discounted.json")
+	graph, err := os.ReadFile(filePath)
 	if err != nil {
 		return nil, err
 	}

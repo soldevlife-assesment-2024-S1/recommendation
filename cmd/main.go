@@ -51,7 +51,8 @@ func initService(cfg *config.Config) (*fiber.App, []*message.Router) {
 	httpClient := httpclient.InitHttpClient(&cfg.HttpClient, cb)
 
 	// init business rules engine
-	bre, err := gorules.Init()
+	pathTicketDiscounted := "./assets/ticket-discounted.json"
+	breTicketDiscounted, err := gorules.Init(pathTicketDiscounted)
 	if err != nil {
 		logger.Error(context.Background(), "Failed to init business rules engine", err)
 	}
@@ -73,7 +74,7 @@ func initService(cfg *config.Config) (*fiber.App, []*message.Router) {
 	}
 
 	recommendationRepo := repositories.New(db, logger, httpClient, redis, &cfg.UserService, &cfg.TicketService)
-	recommendationUsecase := usecases.New(recommendationRepo, bre)
+	recommendationUsecase := usecases.New(recommendationRepo, breTicketDiscounted)
 	middleware := middleware.Middleware{
 		Repo: recommendationRepo,
 	}

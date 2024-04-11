@@ -52,11 +52,25 @@ func (r *repositories) FindTicketByRegionName(ctx context.Context, regionName st
 	}
 
 	// parse response
-	var respData []response.Ticket
+	// var respData []response.Ticket
+
+	// dec := json.NewDecoder(resp.Body)
+	// if err := dec.Decode(&respData); err != nil {
+	// 	return nil, err
+	// }
+
+	var respBase response.BaseResponse
 
 	dec := json.NewDecoder(resp.Body)
-	if err := dec.Decode(&respData); err != nil {
+	if err := dec.Decode(&respBase); err != nil {
 		return nil, err
+	}
+
+	respBase.Data = respBase.Data.(map[string]interface{})
+
+	respData := make([]response.Ticket, 0)
+	for _, v := range respBase.Data.(map[string]interface{})["data"].([]interface{}) {
+		respData = append(respData, v.(response.Ticket))
 	}
 
 	return respData, nil
@@ -79,11 +93,26 @@ func (r *repositories) FindUserProfile(ctx context.Context, userID int64) (respo
 	}
 
 	// parse response
-	var respData response.UserProfile
+	// var respData response.UserProfile
+
+	// dec := json.NewDecoder(resp.Body)
+	// if err := dec.Decode(&respData); err != nil {
+	// 	return response.UserProfile{}, err
+	// }
+
+	var respBase response.BaseResponse
 
 	dec := json.NewDecoder(resp.Body)
-	if err := dec.Decode(&respData); err != nil {
+	if err := dec.Decode(&respBase); err != nil {
 		return response.UserProfile{}, err
+	}
+
+	respBase.Data = respBase.Data.(map[string]interface{})
+	respData := response.UserProfile{
+		UserID:   int(respBase.Data.(map[string]interface{})["user_id"].(float64)),
+		Username: respBase.Data.(map[string]interface{})["username"].(string),
+		Email:    respBase.Data.(map[string]interface{})["email"].(string),
+		Region:   respBase.Data.(map[string]interface{})["region"].(string),
 	}
 
 	return respData, nil
@@ -139,7 +168,7 @@ func (r *repositories) UpsertVenue(ctx context.Context, payload entity.Venues) e
 
 type Repositories interface {
 	// http
-	ValidateToken(ctx context.Context, token string) (bool, error)
+	ValidateToken(ctx context.Context, token string) (response.UserServiceValidate, error)
 	FindUserProfile(ctx context.Context, userID int64) (response.UserProfile, error)
 	FindTicketByRegionName(ctx context.Context, regionName string) ([]response.Ticket, error)
 	// db
@@ -159,34 +188,51 @@ func New(db *sqlx.DB, log log.Logger, httpClient *circuit.HTTPClient, redisClien
 	}
 }
 
-func (r *repositories) ValidateToken(ctx context.Context, token string) (bool, error) {
+func (r *repositories) ValidateToken(ctx context.Context, token string) (response.UserServiceValidate, error) {
 	// http call to user service
 	url := fmt.Sprintf("http://%s:%s/api/private/token/validate?token=%s", r.cfgUserService.Host, r.cfgUserService.Port, token)
 	resp, err := r.httpClient.Get(url)
 	if err != nil {
-		return false, err
+		return response.UserServiceValidate{}, err
 	}
 
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
 		r.log.Error(ctx, "Invalid token", resp.StatusCode)
-		return false, errors.BadRequest("Invalid token")
+		return response.UserServiceValidate{}, errors.BadRequest("Invalid token")
 	}
 
 	// parse response
-	var respData response.UserServiceValidate
+	var respBase response.BaseResponse
 
 	dec := json.NewDecoder(resp.Body)
-	if err := dec.Decode(&respData); err != nil {
-		return false, err
+	if err := dec.Decode(&respBase); err != nil {
+		return response.UserServiceValidate{
+			IsValid: false,
+			UserID:  0,
+		}, err
+	}
+
+	respBase.Data = respBase.Data.(map[string]interface{})
+	respData := response.UserServiceValidate{
+		IsValid:   respBase.Data.(map[string]interface{})["is_valid"].(bool),
+		UserID:    int64(respBase.Data.(map[string]interface{})["user_id"].(float64)),
+		EmailUser: respBase.Data.(map[string]interface{})["email_user"].(string),
 	}
 
 	if !respData.IsValid {
 		r.log.Error(ctx, "Invalid token", resp.StatusCode)
-		return false, errors.BadRequest("Invalid token")
+		return response.UserServiceValidate{
+			IsValid: false,
+			UserID:  0,
+		}, errors.BadRequest("Invalid token")
 	}
 
 	// validate token
-	return true, nil
+	return response.UserServiceValidate{
+		IsValid:   respData.IsValid,
+		UserID:    respData.UserID,
+		EmailUser: respData.EmailUser,
+	}, nil
 }

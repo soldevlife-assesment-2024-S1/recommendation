@@ -1,8 +1,14 @@
 package response
 
+type BaseResponse struct {
+	Meta interface{} `json:"meta"`
+	Data interface{} `json:"data"`
+}
+
 type UserServiceValidate struct {
-	IsValid bool `json:"is_valid"`
-	UserID  int  `json:"user_id"`
+	IsValid   bool   `json:"is_valid"`
+	UserID    int64  `json:"user_id"`
+	EmailUser string `json:"email_user"`
 }
 
 type Recomendation struct {
@@ -29,4 +35,9 @@ type Ticket struct {
 type BreTicketDiscounted struct {
 	DiscountAmount  int `json:"discount_amount"`
 	DiscountedPrice int `json:"discounted_price"`
+}
+
+type OnlineTicket struct {
+	IsSoldOut      bool `json:"is_sold_out"`
+	IsFirstSoldOut bool `json:"is_first_sold_out"`
 }
