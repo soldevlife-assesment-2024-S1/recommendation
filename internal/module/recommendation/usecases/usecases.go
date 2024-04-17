@@ -24,6 +24,11 @@ func (u *usecases) GetOnlineTicket(ctx context.Context, regionName string) (resp
 		return response, err
 	}
 
+	if venue.ID == 0 {
+		venue.IsSoldOut = false
+		venue.IsFirstSoldOut = false
+	}
+
 	response.IsSoldOut = venue.IsSoldOut
 	response.IsFirstSoldOut = venue.IsFirstSoldOut
 
@@ -74,6 +79,11 @@ func (u *usecases) GetRecommendation(ctx context.Context, userID int64) ([]respo
 	venues, err := u.repo.FindVenueByName(ctx, userProfile.Region)
 	if err != nil {
 		return nil, err
+	}
+
+	if venues.ID == 0 {
+		venues.IsSoldOut = false
+		venues.IsFirstSoldOut = false
 	}
 
 	tickets, err := u.repo.FindTicketByRegionName(ctx, userProfile.Region)

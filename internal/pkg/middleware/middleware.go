@@ -40,7 +40,7 @@ func (m *Middleware) ValidateToken(ctx *fiber.Ctx) error {
 		return helpers.RespError(ctx, m.Log, errors.New("error validate token"))
 	}
 
-	ctx.Locals("user_id")
+	ctx.Locals("user_id", resp.UserID)
 
 	return ctx.Next()
 }

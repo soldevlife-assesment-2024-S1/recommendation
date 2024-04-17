@@ -66,14 +66,19 @@ func (r *repositories) FindTicketByRegionName(ctx context.Context, regionName st
 		return nil, err
 	}
 
-	respBase.Data = respBase.Data.(map[string]interface{})
-
-	respData := make([]response.Ticket, 0)
-	for _, v := range respBase.Data.(map[string]interface{})["data"].([]interface{}) {
-		respData = append(respData, v.(response.Ticket))
+	jsonData, err := json.Marshal(respBase.Data)
+	if err != nil {
+		return nil, err
 	}
 
-	return respData, nil
+	var dataTickets []response.Ticket
+
+	err = json.Unmarshal(jsonData, &dataTickets)
+	if err != nil {
+		return nil, err
+	}
+
+	return dataTickets, nil
 }
 
 // FindUserProfile implements Repositories.
@@ -107,12 +112,22 @@ func (r *repositories) FindUserProfile(ctx context.Context, userID int64) (respo
 		return response.UserProfile{}, err
 	}
 
-	respBase.Data = respBase.Data.(map[string]interface{})
+	var dataProfile response.GetProfileResponse
+
+	byteJson, err := json.Marshal(respBase.Data)
+	if err != nil {
+		return response.UserProfile{}, err
+	}
+
+	err = json.Unmarshal(byteJson, &dataProfile)
+	if err != nil {
+		return response.UserProfile{}, err
+	}
+
 	respData := response.UserProfile{
-		UserID:   int(respBase.Data.(map[string]interface{})["user_id"].(float64)),
-		Username: respBase.Data.(map[string]interface{})["username"].(string),
-		Email:    respBase.Data.(map[string]interface{})["email"].(string),
-		Region:   respBase.Data.(map[string]interface{})["region"].(string),
+		UserID:   dataProfile.UserID,
+		Username: dataProfile.FirstName + " " + dataProfile.LastName,
+		Region:   dataProfile.Region,
 	}
 
 	return respData, nil
@@ -122,6 +137,10 @@ func (r *repositories) FindUserProfile(ctx context.Context, userID int64) (respo
 func (r *repositories) FindVenueByName(ctx context.Context, name string) (entity.Venues, error) {
 	var venue entity.Venues
 	err := r.db.GetContext(ctx, &venue, "SELECT * FROM venues WHERE name = $1", name)
+
+	if err == sql.ErrNoRows {
+		return entity.Venues{}, nil
+	}
 	if err != nil {
 		return entity.Venues{}, err
 	}
@@ -190,7 +209,7 @@ func New(db *sqlx.DB, log log.Logger, httpClient *circuit.HTTPClient, redisClien
 
 func (r *repositories) ValidateToken(ctx context.Context, token string) (response.UserServiceValidate, error) {
 	// http call to user service
-	url := fmt.Sprintf("http://%s:%s/api/private/token/validate?token=%s", r.cfgUserService.Host, r.cfgUserService.Port, token)
+	url := fmt.Sprintf("http://%s:%s/api/private/user/validate?token=%s", r.cfgUserService.Host, r.cfgUserService.Port, token)
 	resp, err := r.httpClient.Get(url)
 	if err != nil {
 		return response.UserServiceValidate{}, err

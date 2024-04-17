@@ -6,7 +6,6 @@ import (
 	"recommendation-service/internal/module/recommendation/usecases"
 	"recommendation-service/internal/pkg/helpers"
 	"recommendation-service/internal/pkg/log"
-	"strconv"
 
 	"github.com/ThreeDotsLabs/watermill/message"
 	"github.com/go-playground/validator/v10"
@@ -66,15 +65,9 @@ func (h *RecommendationHandler) UpdateTicketSoldOut(msg *message.Message) error 
 }
 
 func (h *RecommendationHandler) GetRecommendation(ctx *fiber.Ctx) error {
-	userID := ctx.Locals("userID").(string)
+	userID := ctx.Locals("user_id").(int64)
 
-	// convert userID to int64
-	userIDInt, err := strconv.ParseInt(userID, 10, 64)
-	if err != nil {
-		return helpers.RespError(ctx, h.Log, err)
-	}
-
-	resp, err := h.Usecase.GetRecommendation(ctx.Context(), userIDInt)
+	resp, err := h.Usecase.GetRecommendation(ctx.Context(), userID)
 
 	if err != nil {
 		return helpers.RespError(ctx, h.Log, err)

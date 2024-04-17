@@ -76,6 +76,7 @@ func initService(cfg *config.Config) (*fiber.App, []*message.Router) {
 	recommendationRepo := repositories.New(db, logger, httpClient, redis, &cfg.UserService, &cfg.TicketService)
 	recommendationUsecase := usecases.New(recommendationRepo, breTicketDiscounted)
 	middleware := middleware.Middleware{
+		Log:  logger,
 		Repo: recommendationRepo,
 	}
 
