@@ -28,7 +28,10 @@ type repositories struct {
 // FindVenues implements Repositories.
 func (r *repositories) FindVenues(ctx context.Context) ([]entity.Venues, error) {
 	var venues []entity.Venues
-	err := r.db.GetContext(ctx, &venues, "SELECT * FROM venues")
+	err := r.db.SelectContext(ctx, &venues, "SELECT * FROM venues")
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
 	if err != nil {
 		return nil, err
 	}

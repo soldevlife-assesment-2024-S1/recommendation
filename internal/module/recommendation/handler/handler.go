@@ -56,7 +56,6 @@ func (h *RecommendationHandler) UpdateTicketSoldOut(msg *message.Message) error 
 		return err
 	}
 	ctx := context.Background()
-
 	if err := h.Usecase.UpdateTicketSoldOut(ctx, req); err != nil {
 		return err
 	}

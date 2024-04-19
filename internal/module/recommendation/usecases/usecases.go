@@ -3,6 +3,7 @@ package usecases
 import (
 	"context"
 	"encoding/json"
+	"recommendation-service/internal/module/recommendation/models/entity"
 	"recommendation-service/internal/module/recommendation/models/request"
 	"recommendation-service/internal/module/recommendation/models/response"
 	"recommendation-service/internal/module/recommendation/repositories"
@@ -38,29 +39,39 @@ func (u *usecases) GetOnlineTicket(ctx context.Context, regionName string) (resp
 // UpdateTicketSoldOut implements Usecases.
 func (u *usecases) UpdateTicketSoldOut(ctx context.Context, payload *request.TicketSoldOut) error {
 
+	var spec entity.Venues
+
 	venue, err := u.repo.FindVenueByName(ctx, payload.VenueName)
 	if err != nil {
 		return err
 	}
 
-	venue.IsSoldOut = payload.IsSoldOut
+	if venue.ID == 0 {
+		spec.Name = payload.VenueName
+	}
+
+	spec.IsSoldOut = payload.IsSoldOut
 
 	venues, err := u.repo.FindVenues(ctx)
 	if err != nil {
 		return err
 	}
-
-	for _, v := range venues {
-		// check if all venue is sold out first
-		if v.IsFirstSoldOut {
-			venue.IsFirstSoldOut = false
-			break
-		} else {
-			venue.IsFirstSoldOut = true
+	if venues == nil {
+		spec.IsFirstSoldOut = true
+		spec.IsSoldOut = true
+	} else {
+		for _, v := range venues {
+			// check if all venue is sold out first
+			if v.IsFirstSoldOut {
+				spec.IsFirstSoldOut = false
+				break
+			} else {
+				spec.IsFirstSoldOut = true
+			}
 		}
 	}
 
-	err = u.repo.UpsertVenue(ctx, venue)
+	err = u.repo.UpsertVenue(ctx, spec)
 	if err != nil {
 		return err
 	}
