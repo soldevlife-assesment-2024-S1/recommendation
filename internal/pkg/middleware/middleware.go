@@ -29,16 +29,18 @@ func (m *Middleware) ValidateToken(ctx *fiber.Ctx) error {
 	token := auth[7:token.Pos(len(auth))]
 
 	// check repostipories if token is valid
-	isValid, err := m.Repo.ValidateToken(ctx.Context(), token)
+	resp, err := m.Repo.ValidateToken(ctx.Context(), token)
 	if err != nil {
 		m.Log.Error(ctx.Context(), "error validate token", err)
 		return helpers.RespError(ctx, m.Log, err)
 	}
 
-	if !isValid {
+	if !resp.IsValid {
 		m.Log.Error(ctx.Context(), "error validate token", errors.New("error validate token"))
 		return helpers.RespError(ctx, m.Log, errors.New("error validate token"))
 	}
+
+	ctx.Locals("user_id", resp.UserID)
 
 	return ctx.Next()
 }

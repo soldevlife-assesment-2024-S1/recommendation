@@ -20,7 +20,8 @@ func Initialize(app *fiber.App, handlerTicket *handler.RecommendationHandler, m 
 	v1 := Api.Group("/v1")
 	v1.Get("/recommendation", m.ValidateToken, handlerTicket.GetRecommendation)
 
-	_ = Api.Group("/private")
+	private := Api.Group("/private")
+	private.Get("/online-ticket", handlerTicket.GetOnlineTicket)
 
 	return app
 

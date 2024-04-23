@@ -51,7 +51,8 @@ func initService(cfg *config.Config) (*fiber.App, []*message.Router) {
 	httpClient := httpclient.InitHttpClient(&cfg.HttpClient, cb)
 
 	// init business rules engine
-	bre, err := gorules.Init()
+	pathTicketDiscounted := "./assets/ticket-discounted.json"
+	breTicketDiscounted, err := gorules.Init(pathTicketDiscounted)
 	if err != nil {
 		logger.Error(context.Background(), "Failed to init business rules engine", err)
 	}
@@ -73,8 +74,9 @@ func initService(cfg *config.Config) (*fiber.App, []*message.Router) {
 	}
 
 	recommendationRepo := repositories.New(db, logger, httpClient, redis, &cfg.UserService, &cfg.TicketService)
-	recommendationUsecase := usecases.New(recommendationRepo, bre)
+	recommendationUsecase := usecases.New(recommendationRepo, breTicketDiscounted)
 	middleware := middleware.Middleware{
+		Log:  logger,
 		Repo: recommendationRepo,
 	}
 
@@ -93,7 +95,9 @@ func initService(cfg *config.Config) (*fiber.App, []*message.Router) {
 		logger.Error(ctx, "Failed to create consume_booking_queue router", err)
 	}
 
-	messageRouters = append(messageRouters, updateVenueStatus)
+	updateTicketSoldOut, err := messagestream.NewRouter(publisher, "update_ticket_sold_out_poisoned", "update_ticket_sold_out_handler", "update_ticket_sold_out", subscriber, recommendationHandler.UpdateTicketSoldOut)
+
+	messageRouters = append(messageRouters, updateVenueStatus, updateTicketSoldOut)
 
 	serverHttp := http.SetupHttpEngine()
 

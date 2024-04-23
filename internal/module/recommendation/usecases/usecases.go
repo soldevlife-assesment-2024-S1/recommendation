@@ -3,6 +3,7 @@ package usecases
 import (
 	"context"
 	"encoding/json"
+	"recommendation-service/internal/module/recommendation/models/entity"
 	"recommendation-service/internal/module/recommendation/models/request"
 	"recommendation-service/internal/module/recommendation/models/response"
 	"recommendation-service/internal/module/recommendation/repositories"
@@ -11,40 +12,101 @@ import (
 )
 
 type usecases struct {
-	repo    repositories.Repositories
-	gorules zen.Decision
+	repo                  repositories.Repositories
+	discountedTicketRules zen.Decision
+}
+
+// GetOnlineTicket implements Usecases.
+func (u *usecases) GetOnlineTicket(ctx context.Context, regionName string) (response.OnlineTicket, error) {
+	var response response.OnlineTicket
+
+	venue, err := u.repo.FindVenueByName(ctx, regionName)
+	if err != nil {
+		return response, err
+	}
+
+	if venue.ID == 0 {
+		venue.IsSoldOut = false
+		venue.IsFirstSoldOut = false
+	}
+
+	response.IsSoldOut = venue.IsSoldOut
+	response.IsFirstSoldOut = venue.IsFirstSoldOut
+
+	return response, nil
+}
+
+// UpdateTicketSoldOut implements Usecases.
+func (u *usecases) UpdateTicketSoldOut(ctx context.Context, payload *request.TicketSoldOut) error {
+
+	var spec entity.Venues
+
+	venue, err := u.repo.FindVenueByName(ctx, payload.VenueName)
+	if err != nil {
+		return err
+	}
+
+	if venue.ID == 0 {
+		spec.Name = payload.VenueName
+	}
+
+	spec.IsSoldOut = payload.IsSoldOut
+
+	venues, err := u.repo.FindVenues(ctx)
+	if err != nil {
+		return err
+	}
+	if venues == nil {
+		spec.IsFirstSoldOut = true
+		spec.IsSoldOut = true
+	} else {
+		for _, v := range venues {
+			// check if all venue is sold out first
+			if v.IsFirstSoldOut {
+				spec.IsFirstSoldOut = false
+				break
+			} else {
+				spec.IsFirstSoldOut = true
+			}
+		}
+	}
+
+	err = u.repo.UpsertVenue(ctx, spec)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // GetRecommendation implements Usecases.
 func (u *usecases) GetRecommendation(ctx context.Context, userID int64) ([]response.Recomendation, error) {
-	// TODO: find user profile
 
 	userProfile, err := u.repo.FindUserProfile(ctx, userID)
 	if err != nil {
 		return nil, err
 	}
 
-	// TODO: find venue by region name
-
 	venues, err := u.repo.FindVenueByName(ctx, userProfile.Region)
 	if err != nil {
 		return nil, err
 	}
 
-	// TODO: find ticket by region name
+	if venues.ID == 0 {
+		venues.IsSoldOut = false
+		venues.IsFirstSoldOut = false
+	}
 
 	tickets, err := u.repo.FindTicketByRegionName(ctx, userProfile.Region)
 	if err != nil {
 		return nil, err
 	}
 
-	// TODO: calculate recommendation by bre
-
 	var responses []response.Recomendation
 
 	for _, ticket := range tickets {
 
-		result, err := u.gorules.Evaluate(
+		result, err := u.discountedTicketRules.Evaluate(
 			map[string]any{
 				"price":              ticket.Price,
 				"region":             userProfile.Region,
@@ -83,7 +145,6 @@ func (u *usecases) GetRecommendation(ctx context.Context, userID int64) ([]respo
 
 	}
 
-	// TODO: return recommendation response
 	return responses, nil
 }
 
@@ -107,12 +168,14 @@ func (u *usecases) UpdateVenueStatus(ctx context.Context, payload *request.Updat
 
 type Usecases interface {
 	UpdateVenueStatus(ctx context.Context, payload *request.UpdateVenueStatus) error
+	UpdateTicketSoldOut(ctx context.Context, payload *request.TicketSoldOut) error
 	GetRecommendation(ctx context.Context, userID int64) ([]response.Recomendation, error)
+	GetOnlineTicket(ctx context.Context, regionName string) (response.OnlineTicket, error)
 }
 
-func New(repo repositories.Repositories, gorules zen.Decision) Usecases {
+func New(repo repositories.Repositories, discountedTicketRules zen.Decision) Usecases {
 	return &usecases{
-		repo:    repo,
-		gorules: gorules,
+		repo:                  repo,
+		discountedTicketRules: discountedTicketRules,
 	}
 }

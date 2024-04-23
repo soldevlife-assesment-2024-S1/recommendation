@@ -16,3 +16,8 @@ type UpdateVenueStatus struct {
 	IsSoldOut      bool   `json:"is_sold_out" validate:"required"`
 	IsFirstSoldOut bool   `json:"is_first_sold_out" validate:"required"`
 }
+
+type TicketSoldOut struct {
+	VenueName string `json:"venue_name" validate:"required"`
+	IsSoldOut bool   `json:"is_sold_out" validate:"required"`
+}

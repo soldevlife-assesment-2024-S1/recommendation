@@ -6,7 +6,6 @@ import (
 	"recommendation-service/internal/module/recommendation/usecases"
 	"recommendation-service/internal/pkg/helpers"
 	"recommendation-service/internal/pkg/log"
-	"strconv"
 
 	"github.com/ThreeDotsLabs/watermill/message"
 	"github.com/go-playground/validator/v10"
@@ -43,20 +42,47 @@ func (h *RecommendationHandler) UpdateVenueStatus(msg *message.Message) error {
 	return nil
 }
 
-func (h *RecommendationHandler) GetRecommendation(ctx *fiber.Ctx) error {
-	userID := ctx.Locals("userID").(string)
+func (h *RecommendationHandler) UpdateTicketSoldOut(msg *message.Message) error {
 
-	// convert userID to int64
-	userIDInt, err := strconv.ParseInt(userID, 10, 64)
-	if err != nil {
-		return helpers.RespError(ctx, h.Log, err)
+	msg.Ack()
+
+	req := new(request.TicketSoldOut)
+
+	if err := json.Unmarshal(msg.Payload, req); err != nil {
+		return err
 	}
 
-	resp, err := h.Usecase.GetRecommendation(ctx.Context(), userIDInt)
+	if err := h.Validator.Struct(req); err != nil {
+		return err
+	}
+	ctx := context.Background()
+	if err := h.Usecase.UpdateTicketSoldOut(ctx, req); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (h *RecommendationHandler) GetRecommendation(ctx *fiber.Ctx) error {
+	userID := ctx.Locals("user_id").(int64)
+
+	resp, err := h.Usecase.GetRecommendation(ctx.Context(), userID)
 
 	if err != nil {
 		return helpers.RespError(ctx, h.Log, err)
 	}
 
 	return helpers.RespSuccess(ctx, h.Log, resp, "Success get recommendation")
+}
+
+func (h *RecommendationHandler) GetOnlineTicket(ctx *fiber.Ctx) error {
+	regionName := ctx.Query("region_name")
+
+	resp, err := h.Usecase.GetOnlineTicket(ctx.Context(), regionName)
+
+	if err != nil {
+		return helpers.RespError(ctx, h.Log, err)
+	}
+
+	return helpers.RespSuccess(ctx, h.Log, resp, "Success get online ticket")
 }

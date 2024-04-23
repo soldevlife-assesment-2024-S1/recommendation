@@ -2,213 +2,157 @@
   "contentType": "application/vnd.gorules.decision",
   "nodes": [
     {
-      "id": "96fda0e1-6808-4a18-900c-f631788542a9",
-      "name": "ticket",
+      "id": "c8c68bd4-499e-4180-bc64-476196bd6ef2",
+      "name": "user_profile",
       "type": "inputNode",
       "position": {
-        "x": 10,
-        "y": 170
+        "x": 120,
+        "y": 240
       }
     },
     {
-      "id": "ed09a6cb-f333-443f-ac78-0275a2958234",
-      "name": "ticket_price",
+      "id": "b40e0d3b-6883-4279-924e-476424c40687",
+      "name": "mySwitch",
+      "type": "switchNode",
+      "content": {
+        "statements": [
+          {
+            "id": "c417cb4d-ed9d-49d6-978a-9bd03327ccbe",
+            "condition": "is_ticket_sold_out == true"
+          },
+          {
+            "id": "2deadeb8-e445-4af7-9468-bab3da16b6cd",
+            "condition": ""
+          }
+        ]
+      },
+      "position": {
+        "x": 455,
+        "y": 240
+      }
+    },
+    {
+      "id": "a7990dcf-9aba-4168-997a-7270f3536c43",
+      "name": "myResponse",
       "type": "outputNode",
       "position": {
-        "x": 660,
-        "y": 170
+        "x": 1105,
+        "y": 295
       }
     },
     {
-      "id": "b6e14c6f-e5fe-4955-92fa-8075b00ccb60",
-      "name": "price-per-region",
+      "id": "2d0525f2-fd25-4c7a-8ab8-fb6815ee060d",
+      "name": "myDecisionTable",
       "type": "decisionTableNode",
       "content": {
         "rules": [
           {
-            "_id": "6580a515-01c3-48a5-bab0-afd1996477a4",
-            "_description": "in usd",
-            "80d2195d-db75-4b3e-9a79-1dfb37f3c36c": "50",
-            "c764965b-2435-48ac-a955-1d17d25dffcc": "\"wood\"",
-            "d0af06cf-f2cd-40aa-aed6-886233eb0daf": "\"asean\""
+            "_id": "0d3cfbb4-e583-4966-bc47-72cd3d915b7e",
+            "032012a6-5371-4402-9714-88543303ec8f": "\"online\"",
+            "c96fc2b9-13d3-4970-bd01-0cd879e43d4c": "0",
+            "f30add65-b316-4088-8a30-f0ffd708221a": "price"
           },
           {
-            "_id": "0cff9efd-bfab-4d2f-bcb8-4efca60dfdb0",
-            "_description": "in usd",
-            "80d2195d-db75-4b3e-9a79-1dfb37f3c36c": "75",
-            "c764965b-2435-48ac-a955-1d17d25dffcc": "\"wood\"",
-            "d0af06cf-f2cd-40aa-aed6-886233eb0daf": "\"asia\""
-          },
-          {
-            "_id": "9ccfa269-3932-40f7-b2fb-b055900880d6",
-            "_description": "in usd",
-            "80d2195d-db75-4b3e-9a79-1dfb37f3c36c": "75",
-            "c764965b-2435-48ac-a955-1d17d25dffcc": "\"wood\"",
-            "d0af06cf-f2cd-40aa-aed6-886233eb0daf": "\"middle_east\""
-          },
-          {
-            "_id": "a954880a-0cb2-4c2b-aac6-d348f74e3d79",
-            "_description": "in usd",
-            "80d2195d-db75-4b3e-9a79-1dfb37f3c36c": "100",
-            "c764965b-2435-48ac-a955-1d17d25dffcc": "\"wood\"",
-            "d0af06cf-f2cd-40aa-aed6-886233eb0daf": "\"south_america\""
-          },
-          {
-            "_id": "a80225be-66e3-4063-917b-d990b17103bc",
-            "_description": "in usd",
-            "80d2195d-db75-4b3e-9a79-1dfb37f3c36c": "150",
-            "c764965b-2435-48ac-a955-1d17d25dffcc": "\"bronze\"",
-            "d0af06cf-f2cd-40aa-aed6-886233eb0daf": "\"asean\""
-          },
-          {
-            "_id": "308e424a-cb61-44a8-b18c-8bfd556124fc",
-            "_description": "in usd",
-            "80d2195d-db75-4b3e-9a79-1dfb37f3c36c": "175",
-            "c764965b-2435-48ac-a955-1d17d25dffcc": "\"bronze\"",
-            "d0af06cf-f2cd-40aa-aed6-886233eb0daf": "\"asia\""
-          },
-          {
-            "_id": "2236dff2-415f-487c-9336-814edbfa78a8",
-            "_description": "in usd",
-            "80d2195d-db75-4b3e-9a79-1dfb37f3c36c": "175",
-            "c764965b-2435-48ac-a955-1d17d25dffcc": "\"bronze\"",
-            "d0af06cf-f2cd-40aa-aed6-886233eb0daf": "\"middle_east\""
-          },
-          {
-            "_id": "63484f2a-e2c0-411f-bf70-134276857235",
-            "_description": "in usd",
-            "80d2195d-db75-4b3e-9a79-1dfb37f3c36c": "200",
-            "c764965b-2435-48ac-a955-1d17d25dffcc": "\"bronze\"",
-            "d0af06cf-f2cd-40aa-aed6-886233eb0daf": "\"south_america\""
-          },
-          {
-            "_id": "b71bb4de-ae57-4f40-a21c-2132624c1161",
-            "_description": "in usd",
-            "80d2195d-db75-4b3e-9a79-1dfb37f3c36c": "250",
-            "c764965b-2435-48ac-a955-1d17d25dffcc": "\"silver\"",
-            "d0af06cf-f2cd-40aa-aed6-886233eb0daf": "\"asean\""
-          },
-          {
-            "_id": "97799698-ffbb-418a-b934-374e443cdc74",
-            "_description": "in usd",
-            "80d2195d-db75-4b3e-9a79-1dfb37f3c36c": "325",
-            "c764965b-2435-48ac-a955-1d17d25dffcc": "\"silver\"",
-            "d0af06cf-f2cd-40aa-aed6-886233eb0daf": "\"asia\""
-          },
-          {
-            "_id": "7f344015-90dd-4323-baca-bba0aab7fc93",
-            "_description": "in usd",
-            "80d2195d-db75-4b3e-9a79-1dfb37f3c36c": "325",
-            "c764965b-2435-48ac-a955-1d17d25dffcc": "\"silver\"",
-            "d0af06cf-f2cd-40aa-aed6-886233eb0daf": "\"middle_east\""
-          },
-          {
-            "_id": "a05a643d-eafa-465f-8c44-93d1db99ec1f",
-            "_description": "in usd",
-            "80d2195d-db75-4b3e-9a79-1dfb37f3c36c": "325",
-            "c764965b-2435-48ac-a955-1d17d25dffcc": "\"silver\"",
-            "d0af06cf-f2cd-40aa-aed6-886233eb0daf": "\"south_america\""
-          },
-          {
-            "_id": "2aa729a9-1091-4632-9d48-23426280e2b6",
-            "_description": "in usd",
-            "80d2195d-db75-4b3e-9a79-1dfb37f3c36c": "350",
-            "c764965b-2435-48ac-a955-1d17d25dffcc": "\"gold\"",
-            "d0af06cf-f2cd-40aa-aed6-886233eb0daf": "\"asean\""
-          },
-          {
-            "_id": "8222e295-7524-440e-85d7-109554d6f81f",
-            "_description": "in usd",
-            "80d2195d-db75-4b3e-9a79-1dfb37f3c36c": "425",
-            "c764965b-2435-48ac-a955-1d17d25dffcc": "\"gold\"",
-            "d0af06cf-f2cd-40aa-aed6-886233eb0daf": "\"asia\""
-          },
-          {
-            "_id": "ddf4330f-8750-4537-b61d-1a8c85a7a9a0",
-            "_description": "in usd",
-            "80d2195d-db75-4b3e-9a79-1dfb37f3c36c": "425",
-            "c764965b-2435-48ac-a955-1d17d25dffcc": "\"gold\"",
-            "d0af06cf-f2cd-40aa-aed6-886233eb0daf": "\"middle_east\""
-          },
-          {
-            "_id": "2d8e0305-1f77-4a43-8088-46f1944813f1",
-            "_description": "in usd",
-            "80d2195d-db75-4b3e-9a79-1dfb37f3c36c": "450",
-            "c764965b-2435-48ac-a955-1d17d25dffcc": "\"gold\"",
-            "d0af06cf-f2cd-40aa-aed6-886233eb0daf": "\"south_america\""
-          },
-          {
-            "_id": "1d1f1793-7c53-4533-8949-dcbde216d920",
-            "_description": "in usd",
-            "80d2195d-db75-4b3e-9a79-1dfb37f3c36c": "50",
-            "c764965b-2435-48ac-a955-1d17d25dffcc": "\"online\"",
-            "d0af06cf-f2cd-40aa-aed6-886233eb0daf": "\"asean\""
-          },
-          {
-            "_id": "d5f4c126-1fb0-4bbd-b045-0c183bce67a4",
-            "_description": "in usd",
-            "80d2195d-db75-4b3e-9a79-1dfb37f3c36c": "50",
-            "c764965b-2435-48ac-a955-1d17d25dffcc": "\"online\"",
-            "d0af06cf-f2cd-40aa-aed6-886233eb0daf": "\"asia\""
-          },
-          {
-            "_id": "8bdaa664-e49f-49ac-b6b9-3fbb73dc605b",
-            "_description": "in usd",
-            "80d2195d-db75-4b3e-9a79-1dfb37f3c36c": "50",
-            "c764965b-2435-48ac-a955-1d17d25dffcc": "\"online\"",
-            "d0af06cf-f2cd-40aa-aed6-886233eb0daf": "\"middle_east\""
-          },
-          {
-            "_id": "b364cb3b-af7a-414d-af0a-52e2d22b3766",
-            "_description": "in usd",
-            "80d2195d-db75-4b3e-9a79-1dfb37f3c36c": "50",
-            "c764965b-2435-48ac-a955-1d17d25dffcc": "\"online\"",
-            "d0af06cf-f2cd-40aa-aed6-886233eb0daf": "\"south_america\""
+            "_id": "42b8da19-8010-4d4f-bae7-68421b08dea0",
+            "032012a6-5371-4402-9714-88543303ec8f": "",
+            "c96fc2b9-13d3-4970-bd01-0cd879e43d4c": "20",
+            "f30add65-b316-4088-8a30-f0ffd708221a": "price - (price * 0.2)"
           }
         ],
         "inputs": [
           {
-            "id": "c764965b-2435-48ac-a955-1d17d25dffcc",
-            "name": "level",
-            "type": "expression",
-            "field": "level"
-          },
-          {
-            "id": "d0af06cf-f2cd-40aa-aed6-886233eb0daf",
-            "name": "region",
+            "id": "032012a6-5371-4402-9714-88543303ec8f",
+            "name": "Input",
             "type": "expression",
             "field": "region"
           }
         ],
         "outputs": [
           {
-            "id": "80d2195d-db75-4b3e-9a79-1dfb37f3c36c",
+            "id": "f30add65-b316-4088-8a30-f0ffd708221a",
             "name": "Output",
             "type": "expression",
-            "field": "price",
-            "defaultValue": "50"
+            "field": "discounted_price"
+          },
+          {
+            "id": "c96fc2b9-13d3-4970-bd01-0cd879e43d4c",
+            "name": "Output Discount",
+            "type": "expression",
+            "field": "discount_amount"
           }
         ],
         "hitPolicy": "first"
       },
       "position": {
-        "x": 335,
-        "y": 170
+        "x": 770,
+        "y": 300
       }
+    },
+    {
+      "name": "myResponse",
+      "id": "8895d099-71dc-466a-8195-85828a6b7f8e",
+      "position": {
+        "x": 1075,
+        "y": 430
+      },
+      "type": "outputNode"
+    },
+    {
+      "name": "myExpression",
+      "content": {
+        "expressions": [
+          {
+            "id": "192e3f60-11ea-48a0-b5e5-ca1f6ae207e6",
+            "key": "discount_amount",
+            "value": "0"
+          },
+          {
+            "id": "17af81eb-96ab-48ff-b1f3-2402c39b4858",
+            "key": "discounted_price",
+            "value": "price"
+          }
+        ]
+      },
+      "id": "8af7bb7d-b440-475e-9abd-0216eef0dbb5",
+      "position": {
+        "x": 770,
+        "y": 430
+      },
+      "type": "expressionNode"
     }
   ],
   "edges": [
     {
-      "id": "5fe94887-43a3-4977-9673-fb29c1cfbfe0",
+      "id": "d9cfe6cb-b38c-42e9-8dbc-ea4692a7375f",
       "type": "edge",
-      "sourceId": "96fda0e1-6808-4a18-900c-f631788542a9",
-      "targetId": "b6e14c6f-e5fe-4955-92fa-8075b00ccb60"
+      "sourceId": "c8c68bd4-499e-4180-bc64-476196bd6ef2",
+      "targetId": "b40e0d3b-6883-4279-924e-476424c40687"
     },
     {
-      "id": "1593b214-d361-4990-b48c-15b8039d50ae",
+      "id": "7c908f28-26c6-41bd-8457-5d234165ce92",
       "type": "edge",
-      "sourceId": "b6e14c6f-e5fe-4955-92fa-8075b00ccb60",
-      "targetId": "ed09a6cb-f333-443f-ac78-0275a2958234"
+      "sourceId": "b40e0d3b-6883-4279-924e-476424c40687",
+      "targetId": "2d0525f2-fd25-4c7a-8ab8-fb6815ee060d",
+      "sourceHandle": "c417cb4d-ed9d-49d6-978a-9bd03327ccbe"
+    },
+    {
+      "id": "8032d2fa-6b32-4489-8b62-ea071024550f",
+      "type": "edge",
+      "sourceId": "2d0525f2-fd25-4c7a-8ab8-fb6815ee060d",
+      "targetId": "a7990dcf-9aba-4168-997a-7270f3536c43"
+    },
+    {
+      "id": "ce317874-ac1c-487b-83b0-6fc574bc95b9",
+      "sourceId": "b40e0d3b-6883-4279-924e-476424c40687",
+      "type": "edge",
+      "targetId": "8af7bb7d-b440-475e-9abd-0216eef0dbb5",
+      "sourceHandle": "2deadeb8-e445-4af7-9468-bab3da16b6cd"
+    },
+    {
+      "id": "8b040b3f-80b5-460c-b588-6d7061f56125",
+      "sourceId": "8af7bb7d-b440-475e-9abd-0216eef0dbb5",
+      "type": "edge",
+      "targetId": "8895d099-71dc-466a-8195-85828a6b7f8e"
     }
   ]
 }
