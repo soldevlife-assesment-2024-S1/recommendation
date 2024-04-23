@@ -1,5 +1,13 @@
 .PHONY: build clean development and deploy
 
+populate-env:
+	@echo "Populating env..."
+	set -a
+	sleep 1
+	source .env
+	sleep 1
+	set +a
+
 run:
 	@echo "Running application..."
 	go run cmd/main.go
@@ -14,8 +22,8 @@ lint:
 
 unit-test:
 	@echo "Running tests"
-	mkdir -p ./test/coverage && \
-		CGO_ENABLED=1 GOOS=linux go test $(BUILD_ARGS) -v ./... -coverprofile=./test/coverage/coverage.out
+	go test -v -covermode=count ./... -coverprofile=coverage.cov
+	go tool cover -func=coverage.cov 
 
 coverage:
 	@echo "Running tests with coverage"

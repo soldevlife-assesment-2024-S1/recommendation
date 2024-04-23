@@ -63,7 +63,10 @@ func (u *usecases) GetRecommendation(ctx context.Context, userID int64) ([]respo
 			return nil, err
 		}
 
-		result.Result.UnmarshalJSON(byteRes)
+		err = result.Result.UnmarshalJSON(byteRes)
+		if err != nil {
+			return nil, err
+		}
 
 		err = json.Unmarshal(byteRes, &responseBre)
 		if err != nil {

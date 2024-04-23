@@ -97,10 +97,16 @@ func (r *repositories) UpsertVenue(ctx context.Context, payload entity.Venues) e
 	}
 	defer func() {
 		if err != nil {
-			tx.Rollback()
+			err = tx.Rollback()
+			if err != nil {
+				r.log.Error(ctx, "Failed to rollback transaction", err)
+			}
 			return
 		}
 		err = tx.Commit()
+		if err != nil {
+			r.log.Error(ctx, "Failed to commit transaction", err)
+		}
 	}()
 
 	// Check if the venue already exists
