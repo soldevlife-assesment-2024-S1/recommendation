@@ -103,6 +103,7 @@ func initService(cfg *config.Config) (*fiber.App, []*message.Router) {
 	messageRouters = append(messageRouters, updateVenueStatus, updateTicketSoldOut)
 
 	serverHttp := http.SetupHttpEngine()
+	http.InitTracer(cfg)
 
 	r := router.Initialize(serverHttp, &recommendationHandler, &middleware)
 
