@@ -64,7 +64,7 @@ func InitTracer(cfg *config.Config) *sdktrace.TracerProvider {
 	// }
 	// It connects the OpenTelemetry Collector through local gRPC connection.
 	// You may replace `localhost:4317` with your endpoint.
-	conn, err := grpc.NewClient("100.83.50.92:4317",
+	conn, err := grpc.NewClient(cfg.OpenTelemetry.Endpoint,
 		// Note the use of insecure transport here. TLS is recommended in production.
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
