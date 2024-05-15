@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"net/http"
 	"recommendation-service/config"
 	"recommendation-service/internal/module/recommendation/models/entity"
 	"recommendation-service/internal/module/recommendation/models/response"
@@ -42,7 +43,11 @@ func (r *repositories) FindVenues(ctx context.Context) ([]entity.Venues, error) 
 func (r *repositories) FindTicketByRegionName(ctx context.Context, regionName string) ([]response.Ticket, error) {
 	// call http to ticket service
 	url := fmt.Sprintf("http://%s:%s/api/private/ticket?region_name=%s", r.cfgTicketService.Host, r.cfgTicketService.Port, regionName)
-	resp, err := r.httpClient.Get(url)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := r.httpClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +93,11 @@ func (r *repositories) FindTicketByRegionName(ctx context.Context, regionName st
 func (r *repositories) FindUserProfile(ctx context.Context, userID int64) (response.UserProfile, error) {
 	// http call to user service
 	url := fmt.Sprintf("http://%s:%s/api/private/user/profile?user_id=%d", r.cfgUserService.Host, r.cfgUserService.Port, userID)
-	resp, err := r.httpClient.Get(url)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		return response.UserProfile{}, err
+	}
+	resp, err := r.httpClient.Do(req)
 	if err != nil {
 		return response.UserProfile{}, err
 	}
@@ -219,7 +228,11 @@ func New(db *sqlx.DB, log log.Logger, httpClient *circuit.HTTPClient, redisClien
 func (r *repositories) ValidateToken(ctx context.Context, token string) (response.UserServiceValidate, error) {
 	// http call to user service
 	url := fmt.Sprintf("http://%s:%s/api/private/user/validate?token=%s", r.cfgUserService.Host, r.cfgUserService.Port, token)
-	resp, err := r.httpClient.Get(url)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		return response.UserServiceValidate{}, err
+	}
+	resp, err := r.httpClient.Do(req)
 	if err != nil {
 		return response.UserServiceValidate{}, err
 	}
