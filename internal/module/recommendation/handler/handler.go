@@ -66,7 +66,7 @@ func (h *RecommendationHandler) UpdateTicketSoldOut(msg *message.Message) error 
 func (h *RecommendationHandler) GetRecommendation(ctx *fiber.Ctx) error {
 	userID := ctx.Locals("user_id").(int64)
 
-	resp, err := h.Usecase.GetRecommendation(ctx.Context(), userID)
+	resp, err := h.Usecase.GetRecommendation(ctx.UserContext(), userID)
 
 	if err != nil {
 		return helpers.RespError(ctx, h.Log, err)
@@ -78,7 +78,7 @@ func (h *RecommendationHandler) GetRecommendation(ctx *fiber.Ctx) error {
 func (h *RecommendationHandler) GetOnlineTicket(ctx *fiber.Ctx) error {
 	regionName := ctx.Query("region_name")
 
-	resp, err := h.Usecase.GetOnlineTicket(ctx.Context(), regionName)
+	resp, err := h.Usecase.GetOnlineTicket(ctx.UserContext(), regionName)
 
 	if err != nil {
 		return helpers.RespError(ctx, h.Log, err)
