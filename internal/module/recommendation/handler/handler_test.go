@@ -16,6 +16,7 @@ import (
 	"github.com/goccy/go-json"
 	"github.com/gofiber/fiber/v2"
 	"github.com/stretchr/testify/assert"
+	"github.com/uptrace/opentelemetry-go-extra/otelzap"
 	"github.com/valyala/fasthttp"
 )
 
@@ -26,7 +27,7 @@ var (
 	p       message.Publisher
 	ctx     context.Context
 	app     *fiber.App
-	logMock log_internal.Logger
+	logMock *otelzap.Logger
 )
 
 type mockPublisher struct{}
@@ -49,9 +50,7 @@ func setup() {
 	ucMock = new(mocks.Usecases)
 	vld = validator.New()
 	p = NewMockPublisher()
-	logZap := log_internal.SetupLogger()
-	log_internal.Init(logZap)
-	logMock := log_internal.GetLogger()
+	logMock := log_internal.Setup()
 	h = handler.RecommendationHandler{
 		Usecase:   ucMock,
 		Validator: vld,

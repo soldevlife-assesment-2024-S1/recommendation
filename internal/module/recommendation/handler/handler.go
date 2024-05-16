@@ -5,16 +5,16 @@ import (
 	"recommendation-service/internal/module/recommendation/models/request"
 	"recommendation-service/internal/module/recommendation/usecases"
 	"recommendation-service/internal/pkg/helpers"
-	"recommendation-service/internal/pkg/log"
 
 	"github.com/ThreeDotsLabs/watermill/message"
 	"github.com/go-playground/validator/v10"
 	"github.com/goccy/go-json"
 	"github.com/gofiber/fiber/v2"
+	"github.com/uptrace/opentelemetry-go-extra/otelzap"
 )
 
 type RecommendationHandler struct {
-	Log       log.Logger
+	Log       *otelzap.Logger
 	Validator *validator.Validate
 	Usecase   usecases.Usecases
 	Publish   message.Publisher

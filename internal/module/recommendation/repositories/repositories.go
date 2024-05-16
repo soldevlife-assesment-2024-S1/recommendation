@@ -9,17 +9,17 @@ import (
 	"recommendation-service/internal/module/recommendation/models/entity"
 	"recommendation-service/internal/module/recommendation/models/response"
 	"recommendation-service/internal/pkg/errors"
-	"recommendation-service/internal/pkg/log"
 
 	"github.com/goccy/go-json"
 	"github.com/jmoiron/sqlx"
 	"github.com/redis/go-redis/v9"
 	circuit "github.com/rubyist/circuitbreaker"
+	"github.com/uptrace/opentelemetry-go-extra/otelzap"
 )
 
 type repositories struct {
 	db               *sqlx.DB
-	log              log.Logger
+	log              *otelzap.Logger
 	httpClient       *circuit.HTTPClient
 	cfgUserService   *config.UserServiceConfig
 	cfgTicketService *config.TicketServiceConfig
@@ -55,7 +55,7 @@ func (r *repositories) FindTicketByRegionName(ctx context.Context, regionName st
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		r.log.Error(ctx, "Failed to get ticket", resp.StatusCode)
+		r.log.Ctx(ctx).Error(fmt.Sprintf("Failed to get ticket", resp.StatusCode))
 		return nil, errors.BadRequest("Failed to get ticket")
 	}
 
@@ -105,7 +105,7 @@ func (r *repositories) FindUserProfile(ctx context.Context, userID int64) (respo
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		r.log.Error(ctx, "Failed to get user profile", resp.StatusCode)
+		r.log.Ctx(ctx).Error(fmt.Sprintf("Failed to get user profile", resp.StatusCode))
 		return response.UserProfile{}, errors.BadRequest("Failed to get user profile")
 	}
 
@@ -169,13 +169,14 @@ func (r *repositories) UpsertVenue(ctx context.Context, payload entity.Venues) e
 		if err != nil {
 			err = tx.Rollback()
 			if err != nil {
-				r.log.Error(ctx, "Failed to rollback transaction", err)
+				r.log.Ctx(ctx).Error(fmt.Sprintf("Failed to rollback transaction: %v", err))
 			}
 			return
 		}
 		err = tx.Commit()
 		if err != nil {
-			r.log.Error(ctx, "Failed to commit transaction", err)
+			r.log.Ctx(ctx).Error(fmt.Sprintf("Failed to commit transaction: %v", err))
+			return
 		}
 	}()
 
@@ -214,7 +215,7 @@ type Repositories interface {
 	FindVenues(ctx context.Context) ([]entity.Venues, error)
 }
 
-func New(db *sqlx.DB, log log.Logger, httpClient *circuit.HTTPClient, redisClient *redis.Client, userService *config.UserServiceConfig, ticketService *config.TicketServiceConfig) Repositories {
+func New(db *sqlx.DB, log *otelzap.Logger, httpClient *circuit.HTTPClient, redisClient *redis.Client, userService *config.UserServiceConfig, ticketService *config.TicketServiceConfig) Repositories {
 	return &repositories{
 		db:               db,
 		log:              log,
@@ -240,7 +241,7 @@ func (r *repositories) ValidateToken(ctx context.Context, token string) (respons
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		r.log.Error(ctx, "Invalid token", resp.StatusCode)
+		r.log.Ctx(ctx).Error(fmt.Sprintf("Invalid token", resp.StatusCode))
 		return response.UserServiceValidate{}, errors.BadRequest("Invalid token")
 	}
 
@@ -263,7 +264,7 @@ func (r *repositories) ValidateToken(ctx context.Context, token string) (respons
 	}
 
 	if !respData.IsValid {
-		r.log.Error(ctx, "Invalid token", resp.StatusCode)
+		r.log.Ctx(ctx).Error("Invalid token")
 		return response.UserServiceValidate{
 			IsValid: false,
 			UserID:  0,
