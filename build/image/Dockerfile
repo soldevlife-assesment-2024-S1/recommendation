@@ -1,10 +1,11 @@
 FROM golang:1.22 AS builder
 WORKDIR /app
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux go build -o bin/main cmd/main.go
+RUN GOOS=linux go build -o bin/main cmd/main.go
 
-FROM alpine:3.14
-RUN apk --no-cache add ca-certificates
+FROM debian:12
+RUN apt-get update && apt-get install -y ca-certificates \
+    && apt-get clean
 WORKDIR /root/
 COPY --from=builder /app/bin/main /root/
 RUN chmod +x /root/main
