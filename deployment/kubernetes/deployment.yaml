@@ -21,7 +21,7 @@ spec:
             limits:
               memory: "128Mi"
               cpu: "500m"
-          image: ghcr.io/soldevlife-assesment-2024-S1/ticket-service:latest
+          image: ghcr.io/soldevlife-assesment-2024-s1/recommendation-service:latest
           ports:
             - containerPort: 8080
 ---
