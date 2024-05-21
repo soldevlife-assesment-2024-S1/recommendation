@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y ca-certificates \
     && apt-get clean
 WORKDIR /root/
 COPY --from=builder /app/bin/main /root/
-COPY --form=builder /app/assets /root/assets
+COPY --from=builder /app/assets /root/assets
 RUN chmod +x /root/main
 # # Install Doppler CLI
 # RUN wget -q -t3 'https://packages.doppler.com/public/cli/rsa.8004D9FF50437357.key' -O /etc/apk/keys/cli@doppler-8004D9FF50437357.rsa.pub && \
