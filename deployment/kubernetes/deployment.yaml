@@ -17,6 +17,9 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: recommendation
+          envFrom:
+            - configMapRef:
+                name: recommendation-service-config
           resources:
             limits:
               memory: "128Mi"
@@ -24,6 +27,7 @@ spec:
           image: ghcr.io/soldevlife-assesment-2024-s1/recommendation-service:latest
           ports:
             - containerPort: 8080
+          imagePullPolicy: Always
 ---
 apiVersion: v1
 kind: Service
