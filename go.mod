@@ -5,6 +5,7 @@ go 1.22.0
 require (
 	github.com/ThreeDotsLabs/watermill v1.3.5
 	github.com/ThreeDotsLabs/watermill-amqp v1.1.4
+	github.com/dentech-floss/watermill-opentelemetry-go-extra v0.1.0
 	github.com/go-playground/validator/v10 v10.19.0
 	github.com/go-redsync/redsync/v4 v4.12.1
 	github.com/goccy/go-json v0.10.2
@@ -19,6 +20,7 @@ require (
 	github.com/uptrace/opentelemetry-go-extra/otelsql v0.2.4
 	github.com/uptrace/opentelemetry-go-extra/otelsqlx v0.2.4
 	github.com/valyala/fasthttp v1.53.0
+	github.com/voi-oss/watermill-opentelemetry v0.1.3
 	go.opentelemetry.io/otel v1.26.0
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.26.0
 	go.opentelemetry.io/otel/sdk v1.26.0
