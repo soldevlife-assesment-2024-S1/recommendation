@@ -102,7 +102,25 @@ func initService(cfg *config.Config) (*fiber.App, []*message.Router) {
 	messageRouters = append(messageRouters, updateVenueStatus, updateTicketSoldOut)
 
 	serverHttp := http.SetupHttpEngine()
-	http.InitTracer(cfg)
+	conn, serviceName, err := http.InitConn(cfg)
+	if err != nil {
+		logger.Ctx(ctx).Fatal(fmt.Sprintf("Failed to create gRPC connection to collector: %v", err))
+	}
+
+	// setup tracer
+	tracerProvider := http.InitTracer(conn, serviceName)
+	defer tracerProvider.Shutdown(ctx)
+
+	// setup matrics
+	meterProvider, err := http.InitMeterProvider(conn, serviceName)
+	if err != nil {
+		logger.Ctx(ctx).Fatal(fmt.Sprintf("Failed to create meter provider: %v", err))
+	}
+	defer func() {
+		if err := meterProvider(ctx); err != nil {
+			log.Fatalf("failed to shutdown MeterProvider: %s", err)
+		}
+	}()
 
 	r := router.Initialize(serverHttp, &recommendationHandler, &middleware)
 
