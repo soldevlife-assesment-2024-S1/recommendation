@@ -15,6 +15,7 @@ import (
 	log_internal "recommendation-service/internal/pkg/log"
 	"recommendation-service/internal/pkg/messagestream"
 	"recommendation-service/internal/pkg/middleware"
+	"recommendation-service/internal/pkg/observability"
 	"recommendation-service/internal/pkg/redis"
 	router "recommendation-service/internal/route"
 
@@ -102,16 +103,18 @@ func initService(cfg *config.Config) (*fiber.App, []*message.Router) {
 	messageRouters = append(messageRouters, updateVenueStatus, updateTicketSoldOut)
 
 	serverHttp := http.SetupHttpEngine()
-	conn, serviceName, err := http.InitConn(cfg)
+	conn, serviceName, err := observability.InitConn(cfg)
 	if err != nil {
 		logger.Ctx(ctx).Fatal(fmt.Sprintf("Failed to create gRPC connection to collector: %v", err))
 	}
+	// setup log
+	observability.InitLogOtel(conn, serviceName)
 
 	// setup tracer
-	http.InitTracer(conn, serviceName)
+	observability.InitTracer(conn, serviceName)
 
 	// setup metric
-	_, err = http.InitMeterProvider(conn, serviceName)
+	_, err = observability.InitMeterProvider(conn, serviceName)
 	if err != nil {
 		logger.Ctx(ctx).Fatal(fmt.Sprintf("Failed to create meter provider: %v", err))
 	}
